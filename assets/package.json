@@ -1,0 +1,37 @@
+{
+    "name": "@ecohead/symfony-tailwind-form-theme",
+    "version": "1.0.0",
+    "scripts": {
+        "build": "babel src --extensions .ts -d dist"
+    },
+    "symfony": {
+        "controllers": {
+            "password": {
+                "main": "dist/password_controller.js",
+                "fetch": "lazy",
+                "enabled": true,
+                "autoimport": {}
+            }
+        },
+        "importmap": {
+            "@hotwired/stimulus": "^3.0.0",
+            "tailwindcss": "^3.4.1"
+        }
+    },
+    "peerDependencies": {
+        "@hotwired/stimulus": "^3.0.0",
+        "tailwindcss": "^3.4.1"
+    },
+    "devDependencies": {
+        "@babel/cli": "^7.23.9",
+        "@babel/core": "^7.24.0",
+        "@babel/preset-env": "^7.24.0",
+        "@babel/preset-typescript": "^7.23.3",
+        "@ecohead/configs": "^1.3.1",
+        "@hotwired/stimulus": "^3.2.2",
+        "@types/babel__core": "^7.20.5",
+        "@types/node": "^20.11.27",
+        "tailwindcss": "^3.4.1",
+        "typescript": "^5.4.2"
+    }
+}

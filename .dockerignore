@@ -1,0 +1,14 @@
+**/.dockerignore
+**/.env
+**/.git
+**/.gitignore
+**/.idea
+**/.vscode
+**/docker-compose*
+**/compose*
+!**/composer.json
+!**/composer.lock
+**/Dockerfile*
+**/vendor
+LICENSE
+README.md

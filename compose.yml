@@ -1,0 +1,10 @@
+services:
+  php:
+    build:
+      context: .
+    container_name: symfony_tailwind_form_theme_php
+    entrypoint: "tail -f /dev/null"
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
