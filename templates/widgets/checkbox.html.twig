@@ -1,0 +1,33 @@
+{% use 'form_theme/helpers.html.twig' %}
+
+{%- block checkbox_row -%}
+    <div
+        {%- with { classes: 'relative flex items-start', attr: row_attr } -%}{{ block('attributes') }}{%- endwith -%}
+    >
+        <div class="flex h-6 items-center">
+            <input
+                type="checkbox"
+                value="{{ value }}"
+                {% if data is defined and data is same as(true) %}checked{% endif %}
+                {% if help is not null %}aria-describedby="{{ id ~ '_help' }}"{% endif %}
+                {{ block('invalid_attrs') }}
+                {%- with { classes: 'h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600' } -%}{{ block('widget_attributes') }}{%- endwith -%}
+            />
+        </div>
+        <div class="ml-3 text-sm leading-6">
+            <label
+                {% with {
+                    attr: label_attr|default({})|merge({ for: id }),
+                    classes: 'font-medium text-gray-900'
+                } %}
+                    {{ block('attributes') }}
+                {% endwith %}
+            >
+                {{- block('form_label_content') -}}
+            </label>
+            {%- with { attr: help_attr|default({})|merge({ id: id ~ '_help', class: 'text-gray-500' }) } -%}
+                {{ block('form_help') }}
+            {%- endwith -%}
+        </div>
+    </div>
+{%- endblock checkbox_row -%}

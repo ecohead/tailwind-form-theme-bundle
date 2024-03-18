@@ -1,0 +1,9 @@
+{% use 'form_theme/helpers.html.twig' %}
+
+{%- block hidden_row -%}
+    <input
+        {{ block('widget_attributes') }}
+        type="hidden"
+        {% if value is not empty %}value="{{ value }}"{% endif %}
+    />
+{%- endblock hidden_row -%}

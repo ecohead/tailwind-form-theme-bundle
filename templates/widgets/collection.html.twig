@@ -1,0 +1,20 @@
+{% use 'form_theme/helpers.html.twig' %}
+
+{%- block collection_row -%}
+    <fieldset{%- with { attr: row_attr } -%}{{ block('attributes') }}{%- endwith -%}>
+        <legend class="w-full flex flex-wrap items-start justify-between">
+            <span {% with { attr: label_attr|default({}), classes: 'text-base font-semibold leading-6 text-gray-900' } %}{{ block('attributes') }}{% endwith %}>{{- block('form_label_content') -}}</span>
+        </legend>
+        {%- with { attr: help_attr|default({})|merge({ class: 'mt-0' }) } -%}
+            {{ block('form_help') }}
+        {%- endwith -%}
+
+        <div class="space-y-2 mt-2">
+            {% for child in form %}
+                {{ form_row(child) }}
+            {% endfor %}
+        </div>
+
+        {{ block('form_errors') }}
+    </fieldset>
+{%- endblock -%}

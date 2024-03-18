@@ -1,0 +1,57 @@
+{% use 'form_theme/helpers.html.twig' %}
+
+{%- block select_row -%}
+    <div{%- with { attr: row_attr } -%}{{ block('attributes') }}{%- endwith -%}>
+        {%- with { attr: label_attr } -%}
+            {{ block('form_label') }}
+        {%- endwith -%}
+
+        {%- if required and placeholder is none and not placeholder_in_choices and not multiple and (attr.size is not defined or attr.size <= 1) -%}
+            {% set required = false %}
+        {%- endif -%}
+
+        <select
+            {% if multiple %} multiple="multiple"{% endif %}
+            {% if help is not null %}aria-describedby="{{ id ~ '_help' }}"{% endif %}
+            {{ block('invalid_attrs') }}
+            {%- with {
+                classes: attr['data-controller'] is defined ? '' : 'mt-1 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6 aria-invalid:ring-rose-600 aria-invalid:ring-2 disabled:cursor-not-allowed disabled:opacity-50',
+            } -%}
+                {{ block('widget_attributes') }}
+            {%- endwith -%}
+        >
+            {%- if placeholder is not none -%}
+                <option value=""{% if placeholder_attr|default({}) %}{% with { attr: placeholder_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}{% if required and value is empty %} selected="selected"{% endif %}>{{ placeholder != '' ? (translation_domain is same as(false) ? placeholder : placeholder|trans({}, translation_domain)) }}</option>
+            {%- endif -%}
+            {%- if preferred_choices|length > 0 -%}
+                {% set options = preferred_choices %}
+                {% set render_preferred_choices = true %}
+                {{- block('choice_widget_options') -}}
+                {%- if choices|length > 0 and separator is not none -%}
+                    <option disabled="disabled">{{ separator }}</option>
+                {%- endif -%}
+            {%- endif -%}
+            {%- set options = choices -%}
+            {%- set render_preferred_choices = false -%}
+            {{- block('select_options') -}}
+        </select>
+
+        {%- with { attr: help_attr } -%}
+            {{ block('form_help') }}
+        {%- endwith -%}
+        {{ block('form_errors') }}
+    </div>
+{%- endblock select_row -%}
+
+{%- block select_options -%}
+    {% for group_label, choice in options %}
+        {%- if choice is iterable -%}
+            <optgroup label="{{ choice_translation_domain is same as(false) ? group_label : group_label|trans({}, choice_translation_domain) }}">
+                {% set options = choice %}
+                {{- block('select_options') -}}
+            </optgroup>
+        {%- else -%}
+            <option value="{{ choice.value }}"{% if choice.attr %}{% with { attr: choice.attr } %}{{ block('attributes') }}{% endwith %}{% endif %}{% if not render_preferred_choices|default(false) and choice is selectedchoice(value) %} selected="selected"{% endif %}>{{ choice_translation_domain is same as(false) ? choice.label : choice.label|trans(choice.labelTranslationParameters, choice_translation_domain) }}</option>
+        {%- endif -%}
+    {% endfor %}
+{%- endblock select_options -%}

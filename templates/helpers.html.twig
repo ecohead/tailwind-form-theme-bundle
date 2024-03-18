@@ -1,0 +1,184 @@
+{# Misc #}
+
+{%- block form -%}
+    {{ form_start(form) }}
+    {{- form_widget(form) -}}
+    {{ form_end(form) }}
+{%- endblock form -%}
+
+{%- block form_start -%}
+    {%- do form.setMethodRendered() -%}
+    {% set method = method|upper %}
+    {%- if method in ["GET", "POST"] -%}
+        {% set form_method = method %}
+    {%- else -%}
+        {% set form_method = "POST" %}
+    {%- endif -%}
+        <form{% if name != '' %} name="{{ name }}"{% endif %} method="{{ form_method|lower }}"{% if action != '' %} action="{{ action }}"{% endif %}{{ block('attributes') }}{% if multipart %} enctype="multipart/form-data"{% endif %}>
+    {%- if form_method != method -%}
+        <input type="hidden" name="_method" value="{{ method }}">
+    {%- endif -%}
+{%- endblock form_start -%}
+
+{%- block form_end -%}
+    {%- if not render_rest is defined or render_rest -%}
+        {{ form_rest(form) }}
+    {%- endif -%}
+    </form>
+{%- endblock form_end -%}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <ul class="{{ help is null ? 'mt-1 ' }}space-y-1" role="list" id="{{ id ~ '_errors' }}">
+            {%- for error in errors -%}
+                <li class="text-sm font-medium text-red-600">{{ error.message }}</li>
+            {%- endfor -%}
+        </ul>
+    {%- endif -%}
+{%- endblock form_errors -%}
+
+{%- block invalid_attrs -%}
+    {%- if not valid -%}
+        aria-invalid="true"
+        aria-errormessage="{{ id ~ '_errors' }}"
+    {%- endif -%}
+{%- endblock invalid_attrs -%}
+
+{%- block form_rest -%}
+    {% for child in form -%}
+        {% if not child.rendered %}
+            {{- form_row(child) -}}
+        {% endif %}
+    {%- endfor -%}
+
+    {% if not form.methodRendered and form is rootform %}
+        {%- do form.setMethodRendered() -%}
+        {% set method = method|upper %}
+        {%- if method in ["GET", "POST"] -%}
+            {% set form_method = method %}
+        {%- else -%}
+            {% set form_method = "POST" %}
+        {%- endif -%}
+
+        {%- if form_method != method -%}
+            <input type="hidden" name="_method" value="{{ method }}">
+        {%- endif -%}
+    {% endif -%}
+{% endblock form_rest %}
+
+{# Support #}
+
+{%- block form_rows -%}
+    {% for child in form|filter(child => not child.rendered) %}
+        {{- form_row(child) -}}
+    {% endfor %}
+{%- endblock form_rows -%}
+
+{%- block widget_attributes -%}
+    id="{{ id }}" name="{{ full_name }}"
+    {%- if disabled %} disabled="disabled"{% endif -%}
+    {%- if required %} required="required"{% endif -%}
+    {{ block('attributes') }}
+{%- endblock widget_attributes -%}
+
+{%- block widget_container_attributes -%}
+    {%- if id is not empty %}id="{{ id }}"{% endif -%}
+    {{ block('attributes') }}
+{%- endblock widget_container_attributes -%}
+
+{%- block button_attributes -%}
+    id="{{ id }}" name="{{ full_name }}"{% if disabled %} disabled="disabled"{% endif -%}
+    {{ block('attributes') }}
+{%- endblock button_attributes -%}
+
+{% block attributes -%}
+    {%- for attrname, attrvalue in attr -%}
+        {{- " " -}}
+        {%- if attrname is same as('class') -%}
+            class="{{ attrvalue ~ ' ' ~ classes ?? ''|trim }}"
+        {%- elseif attrname in ['placeholder', 'title'] -%}
+            {{- attrname }}="{{ translation_domain is same as(false) or attrvalue is null ? attrvalue : attrvalue|trans(attr_translation_parameters, translation_domain) }}"
+        {%- elseif attrvalue is same as(true) -%}
+            {{- attrname }}="{{ attrname }}"
+        {%- elseif attrvalue is not same as(false) -%}
+            {{- attrname }}="{{ attrvalue }}"
+        {%- endif -%}
+    {%- endfor -%}
+    {%- if attr.class is not defined and classes is defined -%}
+        {{- " " -}}class="{{ classes ?? ''|trim }}"
+    {%- endif -%}
+{%- endblock attributes -%}
+
+{# Help #}
+
+{% block form_help -%}
+    {%- if help is not empty -%}
+        <p id="{{ id }}_help"{% with { classes: 'mt-1 text-sm text-gray-500' } %}{{ block('attributes') }}{% endwith %}>
+            {{- block('form_help_content') -}}
+        </p>
+    {%- endif -%}
+{%- endblock form_help %}
+
+{% block form_help_content -%}
+    {%- if translation_domain is same as(false) -%}
+        {%- if help_html is same as(false) -%}
+            {{- help -}}
+        {%- else -%}
+            {{- help|raw -}}
+        {%- endif -%}
+    {%- else -%}
+        {%- if help_html is same as(false) -%}
+            {{- help|trans(help_translation_parameters, translation_domain) -}}
+        {%- else -%}
+            {{- help|trans(help_translation_parameters, translation_domain)|raw -}}
+        {%- endif -%}
+    {%- endif -%}
+{%- endblock form_help_content %}
+
+{# Labels #}
+
+{%- block form_label -%}
+    {% if label is not same as(false) -%}
+        {% if not compound -%}
+            {% set label_attr = label_attr|merge({'for': id}) %}
+        {%- endif -%}
+
+        <div class="flex justify-between">
+            <label {% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
+                {{- block('form_label_content') -}}
+            </label>
+
+            {% if required -%}
+                <span class="text-sm leading-6 text-gray-500">Requis</span>
+            {%- endif -%}
+        </div>
+    {%- endif -%}
+{%- endblock form_label -%}
+
+{%- block form_label_content -%}
+    {%- if label is empty -%}
+        {%- if label_format is not empty -%}
+            {% set label = label_format|replace({
+                '%name%': name,
+                '%id%': id,
+            }) %}
+        {%- else -%}
+            {% set label = name|humanize %}
+        {%- endif -%}
+    {%- endif -%}
+    {%- if translation_domain is same as(false) -%}
+        {%- if label_html is same as(false) -%}
+            {{- label -}}
+        {%- else -%}
+            {{- label|raw -}}
+        {%- endif -%}
+    {%- else -%}
+        {%- if label_html is same as(false) -%}
+            {{- label|trans(label_translation_parameters, translation_domain) -}}
+        {%- else -%}
+            {{- label|trans(label_translation_parameters, translation_domain)|raw -}}
+        {%- endif -%}
+    {%- endif -%}
+{%- endblock form_label_content -%}
+
+{%- block button_label -%}{%- endblock -%}
