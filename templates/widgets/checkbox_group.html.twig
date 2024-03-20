@@ -1,0 +1,27 @@
+{% use '@EcoheadTailwindFormTheme/helpers.html.twig' %}
+
+{%- block checkbox_group -%}
+    <fieldset{%- with { attr: row_attr } -%}{{ block('attributes') }}{%- endwith -%} {{ stimulus_controller('ecohead/symfony-tailwind-form-theme/checkboxes') }}>
+        <legend class="w-full flex flex-wrap items-start justify-between">
+            <span {% with { attr: label_attr|default({}), classes: 'text-base font-semibold leading-6 text-gray-900' } %}{{ block('attributes') }}{% endwith %}>{{- block('form_label_content') -}}</span>
+
+            <label class="relative h-6 inline-flex flex-row-reverse md:flex-row items-center">
+                <span class="ms-2 md:ms-0 md:me-2 text-sm leading-6 font-medium text-gray-900">Sélectionner tout</span>
+                <input
+                    type="checkbox"
+                    class="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    data-select-all="{{ full_name }}[]"
+                />
+            </label>
+        </legend>
+        {%- with { attr: help_attr|default({})|merge({ class: 'mt-0' }) } -%}
+            {{ block('form_help') }}
+        {%- endwith -%}
+        <div class="space-y-2 mt-2">
+            {% for child in form %}
+                {{ form_row(child) }}
+            {% endfor %}
+        </div>
+        {{ block('form_errors') }}
+    </fieldset>
+{%- endblock -%}

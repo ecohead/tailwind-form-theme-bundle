@@ -1,0 +1,35 @@
+{% use '@EcoheadTailwindFormTheme/helpers.html.twig' %}
+
+{%- block tel_row -%}
+    <div{%- with { attr: row_attr } -%}{{ block('attributes') }}{%- endwith -%}>
+        {%- with { attr: label_attr } -%}
+            {{ block('form_label') }}
+        {%- endwith -%}
+        <div class="mt-1" x-data="inputMask()">
+            <span x-ref="mask" aria-hidden="true" class="hidden">
+                <i x-ref="emphasis"></i>
+            </span>
+            <input
+                type="tel"
+                x-ref="input"
+                autocomplete="tel-national"
+                placeholder="00 00 00 00 00"
+                pattern="\d{2} \d{2} \d{2} \d{2} \d{2}"
+                @keyup="handleValueChange()"
+                title="Nombre à 10 chiffres"
+                {% if value %}value="{{ value }}"{% endif %}
+                {% if help is not null %}aria-describedby="{{ id ~ '_help' }}"{% endif %}
+                {{ block('invalid_attrs') }}
+                {%- with {
+                    classes: 'block w-full rounded-md border-0 py-1.5 text-base text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 aria-invalid:ring-rose-600 aria-invalid:ring-2 disabled:cursor-not-allowed disabled:opacity-50',
+                } -%}
+                    {{ block('widget_attributes') }}
+                {%- endwith -%}
+            />
+        </div>
+        {%- with { attr: help_attr } -%}
+            {{ block('form_help') }}
+        {%- endwith -%}
+        {{ block('form_errors') }}
+    </div>
+{%- endblock tel_row -%}

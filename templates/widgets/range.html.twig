@@ -1,0 +1,26 @@
+{% use '@EcoheadTailwindFormTheme/helpers.html.twig' %}
+
+{%- block range_row -%}
+    <div{%- with { attr: row_attr } -%}{{ block('attributes') }}{%- endwith -%}>
+        {%- with { attr: label_attr } -%}
+            {{ block('form_label') }}
+        {%- endwith -%}
+        <div class="my-2">
+            <input
+                type="range"
+                {% if value %}value="{{ value }}"{% endif %}
+                {% if help is not null %}aria-describedby="{{ id ~ '_help' }}"{% endif %}
+                {{ block('invalid_attrs') }}
+                {%- with {
+                    classes: 'block w-full h-2 rounded-md ring-1 ring-gray-300 appearance-none cursor-pointer bg-gray-200 accent-indigo-600 aria-invalid:accent-rose-600 disabled:cursor-not-allowed disabled:opacity-50',
+                } -%}
+                    {{ block('widget_attributes') }}
+                {%- endwith -%}
+            />
+        </div>
+        {%- with { attr: help_attr } -%}
+            {{ block('form_help') }}
+        {%- endwith -%}
+        {{ block('form_errors') }}
+    </div>
+{%- endblock range_row -%}

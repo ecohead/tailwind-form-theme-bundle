@@ -1,0 +1,131 @@
+{% use '@EcoheadTailwindFormTheme/widgets/checkbox.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/checkbox_group.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/collection.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/color.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/date.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/datetime.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/email.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/hidden.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/input.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/integer.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/money.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/number.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/password.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/percent.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/range.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/search.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/select.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/tel.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/textarea.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/time.html.twig' %}
+{% use '@EcoheadTailwindFormTheme/widgets/url.html.twig' %}
+
+{# Rows #}
+
+{%- block repeated_row -%}
+    {{- block('form_rows') -}}
+{%- endblock repeated_row -%}
+
+{%- block form_row -%}
+    {% if choices is defined %}
+        {% if expanded is same as(false) %}
+            {{ block('select_row') }}
+        {% else %}
+            {% if multiple is same as(true) %}
+                {{ block('checkbox_group') }}
+            {% else %}
+{#                {{ block('radio_row') }}#}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{%- endblock form_row -%}
+
+{# Widgets #}
+
+{%- block form_widget -%}
+    {% if compound %}
+        {{- block('form_widget_compound') -}}
+    {% else %}
+        {{- block('form_widget_simple') -}}
+    {% endif %}
+{%- endblock form_widget -%}
+
+{%- block form_widget_simple -%}
+    {%- set type = type|default('text') -%}
+    {%- if type == 'range' or type == 'color' -%}
+         Attribute "required" is not supported
+        {%- set required = false -%}
+    {%- endif -%}
+    {% with { attr: row_attr|merge({
+        class: (row_attr.class|default('') ~ ' form-group')|trim
+    })} %}
+        <input type="{{ type }}" {{ block('widget_attributes') }}{% if value is not empty %} value="{{ value }}"{% endif %}>
+    {% endwith %}
+{%- endblock form_widget_simple -%}
+
+{%- block form_widget_compound -%}
+    <div {{ block('widget_container_attributes') }}>
+        {%- if form is rootform -%}
+            {{ form_errors(form) }}
+        {%- endif -%}
+        {{- block('form_rows') -}}
+        {{- form_rest(form) -}}
+    </div>
+{%- endblock form_widget_compound -%}
+
+{%- block collection_widget -%}
+    {% if prototype is defined and not prototype.rendered %}
+        {%- set attr = attr|merge({'data-prototype': form_row(prototype) }) -%}
+    {% endif %}
+    {{- block('form_widget') -}}
+{%- endblock collection_widget -%}
+
+{%- block dateinterval_widget -%}
+    {%- if widget == 'single_text' -%}
+        {{- block('form_widget_simple') -}}
+    {%- else -%}
+        <div {{ block('widget_container_attributes') }}>
+            {{- form_errors(form) -}}
+            <table class="{{ table_class|default('') }}" role="presentation">
+                <thead>
+                <tr>
+                    {%- if with_years %}<th>{{ form_label(form.years) }}</th>{% endif -%}
+                    {%- if with_months %}<th>{{ form_label(form.months) }}</th>{% endif -%}
+                    {%- if with_weeks %}<th>{{ form_label(form.weeks) }}</th>{% endif -%}
+                    {%- if with_days %}<th>{{ form_label(form.days) }}</th>{% endif -%}
+                    {%- if with_hours %}<th>{{ form_label(form.hours) }}</th>{% endif -%}
+                    {%- if with_minutes %}<th>{{ form_label(form.minutes) }}</th>{% endif -%}
+                    {%- if with_seconds %}<th>{{ form_label(form.seconds) }}</th>{% endif -%}
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    {%- if with_years %}<td>{{ form_widget(form.years) }}</td>{% endif -%}
+                    {%- if with_months %}<td>{{ form_widget(form.months) }}</td>{% endif -%}
+                    {%- if with_weeks %}<td>{{ form_widget(form.weeks) }}</td>{% endif -%}
+                    {%- if with_days %}<td>{{ form_widget(form.days) }}</td>{% endif -%}
+                    {%- if with_hours %}<td>{{ form_widget(form.hours) }}</td>{% endif -%}
+                    {%- if with_minutes %}<td>{{ form_widget(form.minutes) }}</td>{% endif -%}
+                    {%- if with_seconds %}<td>{{ form_widget(form.seconds) }}</td>{% endif -%}
+                </tr>
+                </tbody>
+            </table>
+            {%- if with_invert %}{{ form_widget(form.invert) }}{% endif -%}
+        </div>
+    {%- endif -%}
+{%- endblock dateinterval_widget -%}
+
+{%- block week_widget -%}
+    {%- if widget == 'single_text' -%}
+        {{ block('form_widget_simple') }}
+    {%- else -%}
+        {%- set vars = widget == 'text' ? { 'attr': { 'size': 1 }} : {} -%}
+        <div {{ block('widget_container_attributes') }}>
+            {{ form_widget(form.year, vars) }}-{{ form_widget(form.week, vars) }}
+        </div>
+    {%- endif -%}
+{%- endblock week_widget -%}
+
+
+
+

@@ -1,0 +1,34 @@
+{% use '@EcoheadTailwindFormTheme/helpers.html.twig' %}
+
+{%- block color_row -%}
+    <div{%- with { attr: row_attr, classes: 'max-w-[200px]' } -%}{{ block('attributes') }}{%- endwith -%}>
+        {%- with { attr: label_attr } -%}
+            {{ block('form_label') }}
+        {%- endwith -%}
+        <div class="mt-1" x-data="colorPicker()">
+            <hex-color-picker
+                    {% if value %}color="{{ value }}"{% endif %}
+                    x-ref="picker"
+                    @color-changed="updateInput"
+            ></hex-color-picker>
+            <hex-input @color-changed="updatePicker">
+                <input
+                    x-ref="input"
+                    type="text"
+                    {% if value %}value="{{ value }}"{% endif %}
+                    {% if help is not null %}aria-describedby="{{ id ~ '_help' }}"{% endif %}
+                    {{ block('invalid_attrs') }}
+                    {%- with {
+                        classes: 'block w-full max-w-[200px] rounded-bl-md rounded-br-md border-0 py-1.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 aria-invalid:ring-rose-600 aria-invalid:ring-2 disabled:cursor-not-allowed disabled:opacity-50',
+                    } -%}
+                        {{ block('widget_attributes') }}
+                    {%- endwith -%}
+                />
+            </hex-input>
+        </div>
+        {%- with { attr: help_attr } -%}
+            {{ block('form_help') }}
+        {%- endwith -%}
+        {{ block('form_errors') }}
+    </div>
+{%- endblock color_row -%}
