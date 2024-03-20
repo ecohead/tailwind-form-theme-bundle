@@ -1,7 +1,7 @@
 {% use '@EcoheadTailwindFormTheme/helpers.html.twig' %}
 
 {%- block checkbox_group -%}
-    <fieldset{%- with { attr: row_attr } -%}{{ block('attributes') }}{%- endwith -%}>
+    <fieldset{%- with { attr: row_attr } -%}{{ block('attributes') }}{%- endwith -%} {{ stimulus_controller('ecohead/symfony-tailwind-form-theme/checkboxes') }}>
         <legend class="w-full flex flex-wrap items-start justify-between">
             <span {% with { attr: label_attr|default({}), classes: 'text-base font-semibold leading-6 text-gray-900' } %}{{ block('attributes') }}{% endwith %}>{{- block('form_label_content') -}}</span>
 
